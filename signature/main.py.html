@@ -1,0 +1,123 @@
+<html>
+<head>
+<title>main.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #7a7e85;}
+.s3 { color: #bcbec4;}
+.s4 { color: #6aab73;}
+.s5 { color: #2aacb8;}
+.s6 { color: #a5c261;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main.py</font>
+</center></td></tr></table>
+<pre><span class="s0">import  </span><span class="s1">os</span>
+<span class="s0">import  </span><span class="s1">zipfile</span>
+<span class="s0">import </span><span class="s1">hashlib</span>
+
+<span class="s2">#elimizde olan bilgiler ve bulundukları dosya adresleri</span>
+<span class="s2">## 91 . satırda bu kısma dahildir</span>
+<span class="s1">json_file_content</span><span class="s3">=</span><span class="s1">open</span><span class="s3">(</span><span class="s4">r&quot;C:\Users\eren.yargil\PycharmProjects\signutere_t\test.json&quot;</span><span class="s3">,</span><span class="s4">&quot;r&quot;</span><span class="s3">).</span><span class="s1">read</span><span class="s3">()</span>
+<span class="s1">txt_file_content</span><span class="s3">=</span><span class="s1">open</span><span class="s3">(</span><span class="s4">r&quot;C:\Users\eren.yargil\PycharmProjects\signutere_t\test.txt&quot;</span><span class="s3">,</span><span class="s4">&quot;r&quot;</span><span class="s3">).</span><span class="s1">read</span><span class="s3">()</span>
+<span class="s1">password_file_content</span><span class="s3">=</span><span class="s1">open</span><span class="s3">(</span><span class="s4">r&quot;C:\Users\eren.yargil\PycharmProjects\signutere_t\pasword test.txt&quot;</span><span class="s3">,</span><span class="s4">&quot;r&quot;</span><span class="s3">).</span><span class="s1">read</span><span class="s3">()</span>
+<span class="s1">json_file</span><span class="s3">=</span><span class="s4">r&quot;C:\Users\eren.yargil\PycharmProjects\signutere_t\test.json&quot;</span>
+<span class="s1">txt_file</span><span class="s3">=</span><span class="s4">r&quot;C:\Users\eren.yargil\PycharmProjects\signutere_t\test.txt&quot;</span>
+<span class="s1">password_file</span><span class="s3">=</span><span class="s4">r&quot;C:\Users\eren.yargil\PycharmProjects\signutere_t\pasword test.txt&quot;</span>
+
+<span class="s2"># sha larını rahatça almak için hazrılanan fonksiyon</span>
+<span class="s0">def </span><span class="s1">get_sha</span><span class="s3">(</span><span class="s1">filename</span><span class="s3">):</span>
+    <span class="s1">sha256_hash </span><span class="s3">= </span><span class="s1">hashlib</span><span class="s3">.</span><span class="s1">sha256</span><span class="s3">()</span>
+    <span class="s0">with </span><span class="s1">open</span><span class="s3">(</span><span class="s1">filename</span><span class="s3">, </span><span class="s4">&quot;rb&quot;</span><span class="s3">) </span><span class="s0">as </span><span class="s1">f</span><span class="s3">:</span>
+        <span class="s0">for </span><span class="s1">byte_block </span><span class="s0">in </span><span class="s1">iter</span><span class="s3">(</span><span class="s0">lambda</span><span class="s3">:</span><span class="s1">f</span><span class="s3">.</span><span class="s1">read</span><span class="s3">(</span><span class="s5">4096</span><span class="s3">), </span><span class="s6">b&quot;&quot;</span><span class="s3">):</span>
+            <span class="s1">sha256_hash</span><span class="s3">.</span><span class="s1">update</span><span class="s3">(</span><span class="s1">byte_block</span><span class="s3">)</span>
+        <span class="s0">return </span><span class="s1">sha256_hash</span><span class="s3">.</span><span class="s1">hexdigest</span><span class="s3">()</span>
+<span class="s2">#elimizdeki dosyalarlaın sha ları ile şifre oluşturmak için olan fonksiyon</span>
+<span class="s0">def </span><span class="s1">get_pasword</span><span class="s3">(</span><span class="s1">filename1</span><span class="s3">,</span><span class="s1">filename2</span><span class="s3">) :</span>
+    <span class="s1">enc1 </span><span class="s3">= </span><span class="s1">get_sha</span><span class="s3">(</span><span class="s1">filename1</span><span class="s3">)</span>
+    <span class="s1">enc2 </span><span class="s3">= </span><span class="s1">get_sha</span><span class="s3">(</span><span class="s1">filename2</span><span class="s3">)</span>
+    <span class="s1">don </span><span class="s3">= </span><span class="s5">0</span>
+    <span class="s1">i </span><span class="s3">= </span><span class="s5">0</span>
+    <span class="s1">k </span><span class="s3">= </span><span class="s4">&quot;&quot;</span>
+    <span class="s0">while </span><span class="s1">don </span><span class="s3">&lt; </span><span class="s5">63</span><span class="s3">:</span>
+        <span class="s1">k </span><span class="s3">+= </span><span class="s1">enc1</span><span class="s3">[</span><span class="s1">i</span><span class="s3">]</span>
+        <span class="s1">k </span><span class="s3">+= </span><span class="s1">enc2</span><span class="s3">[-</span><span class="s1">i</span><span class="s3">]</span>
+        <span class="s1">i </span><span class="s3">= </span><span class="s1">i </span><span class="s3">+ </span><span class="s5">1</span>
+        <span class="s1">don </span><span class="s3">= </span><span class="s1">don </span><span class="s3">+ </span><span class="s5">1</span>
+    <span class="s0">return </span><span class="s1">k</span>
+<span class="s2">#test için hazırlanan altyapının  bir parçası</span>
+<span class="s0">def </span><span class="s1">take_file_from_zip</span><span class="s3">(</span><span class="s1">zip_file</span><span class="s3">,</span><span class="s1">file</span><span class="s3">):</span>
+    <span class="s0">with </span><span class="s1">zipfile</span><span class="s3">.</span><span class="s1">ZipFile</span><span class="s3">(</span><span class="s1">zip_file</span><span class="s3">,</span><span class="s4">&quot;r&quot;</span><span class="s3">) </span><span class="s0">as </span><span class="s1">zip </span><span class="s3">:</span>
+        <span class="s1">zip_list </span><span class="s3">= </span><span class="s1">zip</span><span class="s3">.</span><span class="s1">namelist</span><span class="s3">()</span>
+
+        <span class="s0">if </span><span class="s1">file </span><span class="s0">in </span><span class="s1">zip_list</span><span class="s3">:</span>
+            <span class="s1">zip</span><span class="s3">.</span><span class="s1">extract</span><span class="s3">(</span><span class="s1">file</span><span class="s3">,</span><span class="s1">path</span><span class="s3">=</span><span class="s4">&quot;temp_dir/&quot;</span><span class="s3">)</span>
+            <span class="s0">return  </span><span class="s4">&quot;temp_dir/&quot;</span><span class="s3">+</span><span class="s1">file</span>
+        <span class="s0">else</span><span class="s3">:</span>
+            <span class="s0">return None</span>
+
+    <span class="s2">#gelen dosyaların sha larının kıyaslamak için kulanılan fonksiyon</span>
+<span class="s0">def </span><span class="s1">check_password</span><span class="s3">(</span><span class="s1">filename1</span><span class="s3">,</span><span class="s1">filename2</span><span class="s3">,</span><span class="s1">filename3</span><span class="s3">):</span>
+    <span class="s1">norgin </span><span class="s3">= </span><span class="s1">get_pasword</span><span class="s3">(</span><span class="s1">filename1</span><span class="s3">,</span><span class="s1">filename2</span><span class="s3">)</span>
+    <span class="s1">fil1</span><span class="s3">=</span><span class="s1">open</span><span class="s3">(</span><span class="s1">filename3</span><span class="s3">,</span><span class="s4">&quot;r&quot;</span><span class="s3">)</span>
+    <span class="s1">fil</span><span class="s3">=</span><span class="s1">fil1</span><span class="s3">.</span><span class="s1">read</span><span class="s3">()</span>
+    <span class="s0">if </span><span class="s3">(</span><span class="s1">fil </span><span class="s3">== </span><span class="s1">norgin</span><span class="s3">):</span>
+        <span class="s1">fil1</span><span class="s3">.</span><span class="s1">close</span><span class="s3">()</span>
+        <span class="s0">return True</span>
+    <span class="s0">else</span><span class="s3">:</span>
+        <span class="s1">fil1</span><span class="s3">.</span><span class="s1">close</span><span class="s3">()</span>
+        <span class="s0">return False</span>
+
+<span class="s2">#test için hazırlanan altyapının  bir parçası</span>
+<span class="s0">def </span><span class="s1">up_zip</span><span class="s3">(</span><span class="s1">json_file</span><span class="s3">,</span><span class="s1">txt_file</span><span class="s3">,</span><span class="s1">password</span><span class="s3">):</span>
+    <span class="s0">with </span><span class="s1">open</span><span class="s3">(</span><span class="s4">&quot;t1.json&quot;</span><span class="s3">, </span><span class="s4">&quot;w&quot;</span><span class="s3">) </span><span class="s0">as </span><span class="s1">f1</span><span class="s3">, </span><span class="s1">open</span><span class="s3">(</span><span class="s4">&quot;t2.txt&quot;</span><span class="s3">,</span><span class="s4">&quot;w&quot;</span><span class="s3">) </span><span class="s0">as </span><span class="s1">f2</span><span class="s3">, </span><span class="s1">open</span><span class="s3">(</span><span class="s4">&quot;pt.txt&quot;</span><span class="s3">,</span><span class="s4">&quot;w&quot;</span><span class="s3">) </span><span class="s0">as </span><span class="s1">f3</span><span class="s3">:</span>
+        <span class="s1">f1</span><span class="s3">.</span><span class="s1">write</span><span class="s3">(</span><span class="s1">json_file</span><span class="s3">)</span>
+        <span class="s1">f2</span><span class="s3">.</span><span class="s1">write</span><span class="s3">(</span><span class="s1">txt_file</span><span class="s3">)</span>
+        <span class="s1">f3</span><span class="s3">.</span><span class="s1">write</span><span class="s3">(</span><span class="s1">password</span><span class="s3">)</span>
+    <span class="s1">zip_file_name</span><span class="s3">= </span><span class="s1">os</span><span class="s3">.</span><span class="s1">path</span><span class="s3">.</span><span class="s1">join</span><span class="s3">(</span><span class="s1">os</span><span class="s3">.</span><span class="s1">path</span><span class="s3">.</span><span class="s1">expanduser</span><span class="s3">(</span><span class="s4">'~'</span><span class="s3">), </span><span class="s4">'Desktop'</span><span class="s3">, </span><span class="s4">'compresed.zip'</span><span class="s3">)</span>
+    <span class="s0">with </span><span class="s1">zipfile</span><span class="s3">.</span><span class="s1">ZipFile</span><span class="s3">(</span><span class="s1">zip_file_name</span><span class="s3">,</span><span class="s4">&quot;w&quot;</span><span class="s3">) </span><span class="s0">as </span><span class="s1">zip</span><span class="s3">:</span>
+        <span class="s1">zip</span><span class="s3">.</span><span class="s1">write</span><span class="s3">(</span><span class="s4">&quot;t1.json&quot;</span><span class="s3">)</span>
+        <span class="s1">zip</span><span class="s3">.</span><span class="s1">write</span><span class="s3">(</span><span class="s4">&quot;t2.txt&quot;</span><span class="s3">)</span>
+        <span class="s1">zip</span><span class="s3">.</span><span class="s1">write</span><span class="s3">(</span><span class="s4">&quot;pt.txt&quot;</span><span class="s3">)</span>
+    <span class="s1">os</span><span class="s3">.</span><span class="s1">remove</span><span class="s3">(</span><span class="s4">&quot;t1.json&quot;</span><span class="s3">)</span>
+    <span class="s1">os</span><span class="s3">.</span><span class="s1">remove</span><span class="s3">(</span><span class="s4">&quot;t2.txt&quot;</span><span class="s3">)</span>
+    <span class="s1">os</span><span class="s3">.</span><span class="s1">remove</span><span class="s3">(</span><span class="s4">&quot;pt.txt&quot;</span><span class="s3">)</span>
+
+
+<span class="s2">#test için hazırlanan altyapının  bir parçası</span>
+<span class="s0">def </span><span class="s1">check_zip_signiture</span><span class="s3">(</span><span class="s1">json_file_name</span><span class="s3">,</span><span class="s1">txt_file_name</span><span class="s3">,</span><span class="s1">pasword_file_name</span><span class="s3">):</span>
+    <span class="s1">temp1 </span><span class="s3">= </span><span class="s1">take_file_from_zip</span><span class="s3">(</span><span class="s1">zip_file</span><span class="s3">, </span><span class="s1">json_file_name</span><span class="s3">)</span>
+    <span class="s1">temp2 </span><span class="s3">= </span><span class="s1">take_file_from_zip</span><span class="s3">(</span><span class="s1">zip_file</span><span class="s3">, </span><span class="s1">txt_file_name</span><span class="s3">)</span>
+    <span class="s1">temp3 </span><span class="s3">= </span><span class="s1">take_file_from_zip</span><span class="s3">(</span><span class="s1">zip_file</span><span class="s3">, </span><span class="s1">pasword_file_name</span><span class="s3">)</span>
+
+    <span class="s0">if </span><span class="s1">check_password</span><span class="s3">(</span><span class="s1">temp1</span><span class="s3">, </span><span class="s1">temp2</span><span class="s3">, </span><span class="s1">temp3</span><span class="s3">):</span>
+        <span class="s1">print</span><span class="s3">(</span><span class="s4">&quot;dosyalar güvenli&quot;</span><span class="s3">)</span>
+    <span class="s0">else</span><span class="s3">:</span>
+        <span class="s1">print</span><span class="s3">(</span><span class="s4">&quot;!!!  dosyalar değiştirilmiştir   !!!&quot;</span><span class="s3">)</span>
+
+
+<span class="s1">password</span><span class="s3">=</span><span class="s1">get_pasword</span><span class="s3">(</span><span class="s1">json_file</span><span class="s3">,</span><span class="s1">txt_file</span><span class="s3">)</span>
+
+<span class="s2">#dosya yüklemek için yorum satırını kaldırın test etmek için ise yorum satırı haline getirin</span>
+
+<span class="s1">up_zip</span><span class="s3">(</span><span class="s1">json_file_content</span><span class="s3">,</span><span class="s1">txt_file_content</span><span class="s3">,</span><span class="s1">password</span><span class="s3">)</span>
+
+<span class="s2">#6 satıra dahildir ilk defa zip dosyası oluşturulduktan sonra zip dosyasının adresi ile değiştirerek test edebilirsiniz</span>
+<span class="s1">zip_file </span><span class="s3">= </span><span class="s4">r&quot;C:\Users\eren.yargil\Desktop\compresed.zip&quot;</span>
+
+<span class="s1">print</span><span class="s3">(</span><span class="s4">&quot;zip açılınca alınan şifre    :&quot;</span><span class="s3">,</span><span class="s1">get_pasword</span><span class="s3">(</span><span class="s1">take_file_from_zip</span><span class="s3">(</span><span class="s1">zip_file</span><span class="s3">,</span><span class="s4">&quot;t1.json&quot;</span><span class="s3">),</span><span class="s1">take_file_from_zip</span><span class="s3">(</span><span class="s1">zip_file</span><span class="s3">,</span><span class="s4">&quot;t2.txt&quot;</span><span class="s3">)))</span>
+<span class="s1">print</span><span class="s3">(</span><span class="s4">&quot;kayıtlı olan şifre           :&quot;</span><span class="s3">,</span><span class="s1">open</span><span class="s3">( </span><span class="s1">take_file_from_zip</span><span class="s3">(</span><span class="s1">zip_file</span><span class="s3">, </span><span class="s4">&quot;pt.txt&quot;</span><span class="s3">)).</span><span class="s1">read</span><span class="s3">())</span>
+<span class="s1">print</span><span class="s3">(</span><span class="s4">&quot;dosyada yazılı olanlar       :&quot;</span><span class="s3">,</span><span class="s1">open</span><span class="s3">(</span><span class="s1">take_file_from_zip</span><span class="s3">(</span><span class="s1">zip_file</span><span class="s3">,</span><span class="s4">&quot;t2.txt&quot;</span><span class="s3">)).</span><span class="s1">read</span><span class="s3">())</span>
+
+
+<span class="s1">check_zip_signiture</span><span class="s3">(</span><span class="s4">&quot;t1.json&quot;</span><span class="s3">,</span><span class="s4">&quot;t2.txt&quot;</span><span class="s3">,</span><span class="s4">&quot;pt.txt&quot;</span><span class="s3">)</span>
+
+</pre>
+</body>
+</html>

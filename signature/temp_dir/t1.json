@@ -1,0 +1,11 @@
+{
+  "name": "Johane Deoe",
+  "age": 30,
+  "city": "ad",
+  "married": true,
+  "children": ["Janet", "Jamesan"],
+  "pets": [
+    {"type": "dog", "name": "Buddy"},
+    {"type": "cat", "name": "Whiskers"}
+  ]
+}
